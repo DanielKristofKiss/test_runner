@@ -5,5 +5,5 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: macos-15
     steps:
-      - run: cc main.c
+      - run: cc ${{ github.workspace }}/main.c
       - run: ./a.out

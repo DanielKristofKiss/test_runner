@@ -7,6 +7,9 @@ jobs:
     steps:
       - name: explore
         uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 'latest'
       - run: ls
       - run: ls ${{ github.workspace }}
       - run: cc ${{ github.workspace }}/main.c

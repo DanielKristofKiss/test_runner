@@ -11,6 +11,6 @@ jobs:
         with:
           xcode-version: 'latest'
       - run: ls
-      - run: clang --version
-      - run: clang ${{ github.workspace }}/main.c
+      - run: clang++ --version
+      - run: clang++ -std=c++23 ${{ github.workspace }}/main.c
       - run: ./a.out

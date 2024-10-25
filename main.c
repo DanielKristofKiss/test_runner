@@ -3,27 +3,26 @@
 
 int main(int argc, char* argv[])
 {
-    uint64_t modifier = 2;
-    uint64_t data_ia = 0x12345678;
-    uint64_t data_ib = 0x12345678;
-    uint64_t data_da = 0x12345678;
-    uint64_t data_db = 0x12345678;
+    register uint64_t x17 __asm("x17") = 0x123467;
+    register uint64_t x16 __asm("x16") = 0x55aa00ff;
 
-    printf("PACIA             PACIB             PACDA             PACDB\n");
-    printf("%016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "\n", data_ia, data_ib, data_da, data_db);
+    asm volatile("hint 0x8" : "+r"(x17) : "r"(x16)); // pacia1716
+    uint64_t checkValue = x17;
+    printf("pac %llx\n", x17);
+    asm volatile ("hint  0xc" // autia1716
+                  : "+r"(x17)
+                  : "r"(x16)
+                  :);
 
-    asm volatile("pacia %[reg], %[mod]" : [reg] "+r" (data_ia) : [mod] "r" (modifier) : );
-    asm volatile("pacib %[reg], %[mod]" : [reg] "+r" (data_ib) : [mod] "r" (modifier) : );
-    asm volatile("pacda %[reg], %[mod]" : [reg] "+r" (data_da) : [mod] "r" (modifier) : );
-    asm volatile("pacdb %[reg], %[mod]" : [reg] "+r" (data_db) : [mod] "r" (modifier) : );
+    printf("auth %llx\n", x17);
 
-    printf("%016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "\n", data_ia, data_ib, data_da, data_db);
 
-    asm volatile("autia %[reg], %[mod]" : [reg] "+r" (data_ia) : [mod] "r" (modifier) : );
-    asm volatile("autib %[reg], %[mod]" : [reg] "+r" (data_ib) : [mod] "r" (modifier) : );
-    asm volatile("autda %[reg], %[mod]" : [reg] "+r" (data_da) : [mod] "r" (modifier) : );
-    asm volatile("autdb %[reg], %[mod]" : [reg] "+r" (data_db) : [mod] "r" (modifier) : );
-
-    printf("%016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "  %016" PRIX64 "\n", data_ia, data_ib, data_da, data_db);
+    asm volatile ("mov   x30, %[checkValue]     \r\n" \
+                  "hint  0x7                    \r\n" \
+                  "mov   %[checkValue], x30     \r\n" \
+        : [checkValue] "+r"(checkValue)
+        :
+        : "x30");
+    printf("checkValue %llx\n", checkValue);
     return 0;
 }

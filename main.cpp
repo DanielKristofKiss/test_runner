@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[])
 {
-    register uint64_t x17 __asm("x17") = 0x123467;
+    register uint64_t x17 __asm("x17") = 0x8000000194918d34;
     register uint64_t x16 __asm("x16") = 0x55aa00ff;
 
     asm volatile("hint 0x8" : "+r"(x17) : "r"(x16)); // pacia1716
